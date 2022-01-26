@@ -15,5 +15,8 @@ and copied to `public/app`.
 
 ### Backend
 1. Install Symfony console
-2. `symfony serve`
-3. Open the displayed link
+2. Run `composer install`
+3. Create the file `.env.local` and copy configurations from `.env` into this file and adjust it
+4. `symfony serve`
+5. Open the displayed link
+6. Go to `/connect/google` to link your google account
