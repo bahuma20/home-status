@@ -32,7 +32,8 @@ class GoogleController extends AbstractController
         $client = $clientRegistry->getClient('google');
         $token = $client->getAccessToken();
 
-        $keyValueStore->set('google_token', $token);
+        $keyValueStore->set('google_access_token', $token);
+        $keyValueStore->set('google_refresh_token', $token->getRefreshToken());
 
         return new Response('Successfully linked google account');
     }
