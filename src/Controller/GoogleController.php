@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\KeyValueStore;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,11 +27,12 @@ class GoogleController extends AbstractController
     }
 
     #[Route('/connect/google/callback', name: 'connect_google_callback')]
-    public function connectCheckAction(Request $request, ClientRegistry $clientRegistry)
+    public function connectCheckAction(Request $request, ClientRegistry $clientRegistry, KeyValueStore $keyValueStore)
     {
-        $code = $request->get('code');
         $client = $clientRegistry->getClient('google');
         $token = $client->getAccessToken();
+
+        $keyValueStore->set('google_token', $token);
 
         return new Response('Successfully linked google account');
     }

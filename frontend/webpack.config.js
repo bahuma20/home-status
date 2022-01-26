@@ -1,5 +1,5 @@
 module.exports = {
-    entry: './js/main.js',
+    entry: ['regenerator-runtime/runtime.js', './js/main.js'],
     output: {
         path: __dirname + '/../public/app',
         filename: 'app.js'

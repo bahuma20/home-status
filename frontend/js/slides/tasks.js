@@ -1,4 +1,3 @@
-import Helpers from "../Helpers";
 import Slide from "../Slide";
 
 export default class Tasks extends Slide {
@@ -9,7 +8,7 @@ export default class Tasks extends Slide {
     }
 
     async load() {
-        const response = await fetch('tasks.php', {
+        const response = await fetch('/api/tasks', {
             method: 'GET',
         });
         this.data = await response.json();
@@ -20,7 +19,7 @@ export default class Tasks extends Slide {
         let tasks = [];
         this.data.forEach(task => {
             // Filter out child tasks. We focus on the big things here...
-            if (task.parent !== null) {
+            if (task.hasOwnProperty('parent')) {
                 return;
             }
 
@@ -28,11 +27,11 @@ export default class Tasks extends Slide {
         });
 
         return `
-          <lottie-player 
-            src="https://assets7.lottiefiles.com/packages/lf20_AXcpdj.json" 
-            background="transparent" 
-            speed="0.8" 
-            style="width: 300px; height: 300px;" 
+          <lottie-player
+            src="https://assets7.lottiefiles.com/packages/lf20_AXcpdj.json"
+            background="transparent"
+            speed="0.8"
+            style="width: 300px; height: 300px;"
             autoplay
             class="tasks__image"></lottie-player>
           <ul class="tasks__list">

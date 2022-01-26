@@ -12,19 +12,19 @@ export default class App {
         this.createSlides();
 
         this.init()
-    } 
+    }
 
     createSlides() {
-        this.slides.push(new Temperature('xiaomi_arbeitsbereich_temperature', 'Arbeitsbereich'));
-        this.slides.push(new Temperature('xiaomi_schlafzimmer_temperature', 'Schlafzimmer'));
-        this.slides.push(new Temperature('xiaomi_wohnzimmer_temperature', 'Wohnbereich'));
-        this.slides.push(new Temperature('bewegungsmelder_bad_temperature', 'Bad'));
-        this.slides.push(new Temperature('weather_home_temperature', 'Außen'));
+        // this.slides.push(new Temperature('xiaomi_arbeitsbereich_temperature', 'Arbeitsbereich'));
+        // this.slides.push(new Temperature('xiaomi_schlafzimmer_temperature', 'Schlafzimmer'));
+        // this.slides.push(new Temperature('xiaomi_wohnzimmer_temperature', 'Wohnbereich'));
+        // this.slides.push(new Temperature('bewegungsmelder_bad_temperature', 'Bad'));
+        // this.slides.push(new Temperature('weather_home_temperature', 'Außen'));
         this.slides.push(new Tasks());
 
-        for (let i = 0; i < 10; i++) {
-            this.slides.push(new Photo());
-        }
+        // for (let i = 0; i < 10; i++) {
+        //     this.slides.push(new Photo());
+        // }
     }
 
     async init() {
