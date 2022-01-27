@@ -42,7 +42,7 @@ jobs:
         uses: burnett01/rsync-deployments@5.2
         with:
           switches: --exclude '.env.local' --exclude 'frontend' --exclude '.git' --exclude '.github' -avzr --delete
-          path: src/
+          path: ./
           remote_path: /var/www/vhosts/bahuma.io/httpdocs/apps/home-status
           remote_host: bahuma.io
           remote_user: bahuma-me
