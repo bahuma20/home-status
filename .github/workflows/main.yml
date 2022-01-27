@@ -38,13 +38,12 @@ jobs:
       - name: Build frontend
         run: cd frontend && npm run-script build
 
-      - name: deploy file
-        uses: swillner/sftp-sync-action@v1.0
+      - name: upload
+        uses: burnett01/rsync-deployments@5.2
         with:
-          user: 'bahuma-me'
-          server: 'server4.bahuma.io'
-          user_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          #host_public_key: "ssh-rsa tEPUrwIiZNMK8Sv30bn/IhGFbUtnA4yHn7Wv2IEaxiQ"
-          local: './'
-          remote: '/var/www/vhosts/bahuma.io/httpdocs/apps/home-status'
-          mirror_options: "--exclude-glob=.git*/ --exclude-glob=frontend/ --verbose"
+          switches: --exclude '.env.local' --exclude 'frontend' --exclude '.git' --exclude '.github' -avzr --delete
+          path: src/
+          remote_path: /var/www/vhosts/bahuma.io/httpdocs/apps/home-status
+          remote_host: bahuma.io
+          remote_user: bahuma-me
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
