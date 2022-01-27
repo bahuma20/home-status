@@ -48,3 +48,12 @@ jobs:
           remote_host: bahuma.io
           remote_user: bahuma-me
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: executing post upload actions via ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: server4.bahuma.io
+          username: bahuma-me
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: cd /var/www/vhosts/bahuma.io/httpdocs/apps/home-status && /opt/plesk/php/8.0/bin/php bin/console cache:clear
