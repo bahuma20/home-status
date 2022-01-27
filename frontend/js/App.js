@@ -15,11 +15,15 @@ export default class App {
     }
 
     createSlides() {
-        // this.slides.push(new Temperature('xiaomi_arbeitsbereich_temperature', 'Arbeitsbereich'));
-        // this.slides.push(new Temperature('xiaomi_schlafzimmer_temperature', 'Schlafzimmer'));
-        // this.slides.push(new Temperature('xiaomi_wohnzimmer_temperature', 'Wohnbereich'));
-        // this.slides.push(new Temperature('bewegungsmelder_bad_temperature', 'Bad'));
-        // this.slides.push(new Temperature('weather_home_temperature', 'Außen'));
+        this.slides.push(new Temperature('aqara_bad_temperature'));
+        this.slides.push(new Temperature('aqara_wohnzimmer_temperature'));
+        this.slides.push(new Temperature('aqara_kueche_temperature'));
+        this.slides.push(new Temperature('aqara_schlafzimmer_temperature'));
+        this.slides.push(new Temperature('aqara_buero_temperature'));
+        this.slides.push(new Temperature('tado_ankleideraum_temperature'));
+        this.slides.push(new Temperature('aqara_speisekammer_temperature'));
+        this.slides.push(new Temperature('aqara_balkon_temperature'));
+        this.slides.push(new Tasks());
         this.slides.push(new Tasks());
 
         for (let i = 0; i < 10; i++) {
