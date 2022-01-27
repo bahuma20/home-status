@@ -24,7 +24,7 @@ class GoogleClient
             $refreshToken = $keyValueStore->get('google_refresh_token');
             $oauthClient = $clientRegistry->getClient('google');
             $newToken = $oauthClient->refreshAccessToken($refreshToken);
-            $keyValueStore->set('google_access_token', $newToken->getToken());
+            $keyValueStore->set('google_access_token', $newToken);
             $this->accessToken = $newToken;
         }
     }

@@ -9,7 +9,7 @@ export default class Photo extends Slide {
     }
 
     async load() {
-        const response = await fetch('photo.php', {
+        const response = await fetch('/api/photos', {
             method: 'GET',
         });
         this.data = await response.json();
@@ -54,7 +54,7 @@ export default class Photo extends Slide {
             numeric: 'auto',
         });
 
-        let dateText = rtf.format(0 - value, unit);
+        let dateText = this.data.homeAppType === 'people' ? rtf.format(0 - value, unit) : '';
 
         return `
             <img class="photo__image" src="${imageUrl}">

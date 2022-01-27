@@ -41,4 +41,9 @@ class KeyValueStore
 
         return unserialize($this->store->$key);
     }
+
+    public function has(string $key): bool
+    {
+        return property_exists($this->store, $key);
+    }
 }

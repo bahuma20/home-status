@@ -22,9 +22,9 @@ export default class App {
         // this.slides.push(new Temperature('weather_home_temperature', 'Außen'));
         this.slides.push(new Tasks());
 
-        // for (let i = 0; i < 10; i++) {
-        //     this.slides.push(new Photo());
-        // }
+        for (let i = 0; i < 10; i++) {
+            this.slides.push(new Photo());
+        }
     }
 
     async init() {
