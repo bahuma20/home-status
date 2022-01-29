@@ -1,4 +1,6 @@
 import Overlay from "../Overlay";
+import Helpers from "../Helpers";
+import moment from "moment";
 
 export default class Alerts extends Overlay {
     realtime;
@@ -65,10 +67,21 @@ export default class Alerts extends Overlay {
     }
 
     addAlert(alert) {
-        // TODO: Implement UI
+        this.parentElement.append(Helpers.createElementFromHTML(`
+            <div class="alert alert--important" data-id="${alert.id}">
+                <div class="alert__title">${alert.title}</div>
+                <div class="alert__body">${alert.body}</div>
+                <div class="alert__time"><span class="moment-from-now" data-date="${alert.created}">${moment(new Date(alert.created)).fromNow()}</span></div>
+            </div>`));
+
+        // TODO: Stinger animation
+        // TODO: different priority
+        // TODO: Sorting by priority
+        // TODO: Play "pling" sound
+        // TODO: Show icon
     }
 
     removeAlert(alert) {
-        // TODO: Implement UI
+        this.parentElement.querySelector(`.alert[data-id="${alert.id}"]`).remove();
     }
 }

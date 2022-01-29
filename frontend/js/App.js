@@ -5,6 +5,7 @@ import Photo from "./slides/photo";
 import Alerts from "./overlays/Alerts";
 import Realtime from "./Realtime";
 import Clock from "./overlays/Clock";
+import moment from "moment";
 
 export default class App {
     realtime;
@@ -51,6 +52,8 @@ export default class App {
         setInterval(() => {
             this.nextSlide();
         }, 30000);
+
+        this.setupMomentFromNow();
     }
 
     async addOverlays() {
@@ -90,5 +93,13 @@ export default class App {
 
 
         this.loadNextSlide();
+    }
+
+    setupMomentFromNow() {
+        setInterval(() => {
+            document.querySelectorAll('.moment-from-now').forEach(element => {
+                element.textContent = moment(element.dataset.date).fromNow();
+            });
+        }, 10000);
     }
 }
