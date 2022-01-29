@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class GoogleController extends AbstractController
 {
-    #[Route('/connect/google', name: 'connect_google_start')]
+    #[Route('/connect/google', name: 'connect_google_start', methods: ['GET'])]
     public function connectAction(ClientRegistry $clientRegistry): Response
     {
         return $clientRegistry
@@ -26,7 +26,7 @@ class GoogleController extends AbstractController
             ]);
     }
 
-    #[Route('/connect/google/callback', name: 'connect_google_callback')]
+    #[Route('/connect/google/callback', name: 'connect_google_callback', methods: ['GET'])]
     public function connectCheckAction(Request $request, ClientRegistry $clientRegistry, KeyValueStore $keyValueStore)
     {
         $client = $clientRegistry->getClient('google');

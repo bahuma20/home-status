@@ -18,7 +18,7 @@ class HaTemperatureController extends AbstractController
         $this->client = $homeAssistant->getClient();
     }
 
-    #[Route('/api/ha/temperature/{entityId}')]
+    #[Route('/api/ha/temperature/{entityId}', methods: ['GET'])]
     public function getTemperature(string $entityId): Response
     {
         $response = $this->client->get('states/sensor.' . $entityId);

@@ -2,13 +2,16 @@ import Temperature from "./slides/temperature";
 import Tasks from "./slides/tasks";
 import Helpers from "./Helpers";
 import Photo from "./slides/photo";
-import moment from "moment";
+import Alerts from "./overlays/Alerts";
+import Realtime from "./Realtime";
+import Clock from "./overlays/Clock";
 
 export default class App {
-    constructor() {
-        this.slides = [];
-        this.stage = null;
+    realtime;
+    slides = [];
+    stage = null;
 
+    constructor() {
         this.createSlides();
 
         this.init()
@@ -32,6 +35,8 @@ export default class App {
     }
 
     async init() {
+        this.realtime = new Realtime();
+
         this.stage = document.querySelector('.stage');
         let scale = document.querySelector('body').offsetWidth / 1024;
         this.stage.setAttribute('style', `transform: scale(${scale})`);
@@ -49,16 +54,17 @@ export default class App {
     }
 
     async addOverlays() {
-        this.stage.appendChild(Helpers.createElementFromHTML(`<div class="overlays">
-          <div class="overlay-clock"></div>
-        </div>`));
+        const overlaysContainer = this.stage.appendChild(Helpers.createElementFromHTML(`<div class="overlays"></div>`));
 
-        let updateClock = () => {
-            this.stage.querySelector('.overlay-clock').textContent = moment().format('HH:mm');
-        }
+        const overlays = {
+            clock: new Clock(),
+            alerts: new Alerts(this.realtime),
+        };
 
-        updateClock();
-        setInterval(updateClock, 60000)
+        Object.keys(overlays).forEach(key => {
+            const overlayParent = overlaysContainer.appendChild(Helpers.createElementFromHTML(`<div class="overlay-${key}">`));
+            overlays[key].init(overlayParent);
+        });
     }
 
     async loadNextSlide() {

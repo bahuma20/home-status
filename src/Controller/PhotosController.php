@@ -5,9 +5,7 @@ namespace App\Controller;
 use App\Service\KeyValueStore;
 use App\Service\PhotosService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PhotosController extends AbstractController
@@ -26,7 +24,7 @@ class PhotosController extends AbstractController
      *
      * @return Response
      */
-    #[Route('/api/photos/index', name: 'photos_index')]
+    #[Route('/api/photos/index', name: 'photos_index', methods: ['GET'])]
     public function index(): Response
     {
         $this->photosService->storePeoplePhotos();
@@ -36,7 +34,7 @@ class PhotosController extends AbstractController
         return new Response('Photos were added to index.');
     }
 
-    #[Route('/api/photos', name: 'photos_get')]
+    #[Route('/api/photos', name: 'photos_get', methods: ['GET'])]
     public function getPhoto(): Response
     {
         $types = ['art', 'people'];

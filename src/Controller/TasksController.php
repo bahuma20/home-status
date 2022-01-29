@@ -3,14 +3,9 @@
 namespace App\Controller;
 
 use App\Service\GoogleClient;
-use App\Service\KeyValueStore;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\RequestException;
-use League\OAuth2\Client\Provider\Google;
-use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -23,7 +18,7 @@ class TasksController extends AbstractController
         $this->client = $googleClient->getClient('https://tasks.googleapis.com/tasks/v1/');
     }
 
-    #[Route('/api/tasks', name: 'tasks')]
+    #[Route('/api/tasks', name: 'tasks', methods: ['GET'])]
     public function index(): Response
     {
         try {
