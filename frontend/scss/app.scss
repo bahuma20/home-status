@@ -1,3 +1,6 @@
+* {
+  box-sizing: border-box;
+}
 
 html, body {
   margin: 0;
@@ -38,52 +41,7 @@ div {
   bottom: 0;
 }
 
-.overlay-alerts {
-  position: absolute;
-  top: 2%;
-  right: 2%;
-}
 
-.alert {
-  background: #FFF;
-  padding: 10px 16px;
-  border-radius: 8px;
-  min-width: 160px;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, .24);
-}
-
-@keyframes alert-blink {
-  40% {
-    transform: scale(1);
-  }
-  50% {
-    background: #ff861e;
-    transform: scale(1.1);
-  }
-  60% {
-    transform: scale(1);
-  }
-}
-
-.alert--important {
-  animation: alert-blink infinite .8s;
-}
-
-.alert__title {
-  font-weight: bold;
-  margin-bottom: .5em;
-  font-size: 1.2em;
-}
-
-.alert__body {
-  margin-bottom: 8px;
-}
-
-.alert__time {
-  font-size: .7em;
-  color: rgb(0, 0, 0, .4);
-  text-align: right;
-}
 
 .slide {
   position: absolute;
@@ -201,3 +159,5 @@ div {
     z-index: 499;
   }
 }
+
+@import "alerts";

@@ -41,8 +41,7 @@ export default class Alerts extends Overlay {
     }
 
     renderInitial() {
-        console.log(this.alerts);
-        // TODO: Implement UI
+        this.alerts.forEach(alert => this.parentElement.appendChild(this.renderAlert(alert)));
     }
 
     async loadAlerts() {
@@ -67,12 +66,7 @@ export default class Alerts extends Overlay {
     }
 
     addAlert(alert) {
-        this.parentElement.append(Helpers.createElementFromHTML(`
-            <div class="alert alert--important" data-id="${alert.id}">
-                <div class="alert__title">${alert.title}</div>
-                <div class="alert__body">${alert.body}</div>
-                <div class="alert__time"><span class="moment-from-now" data-date="${alert.created}">${moment(new Date(alert.created)).fromNow()}</span></div>
-            </div>`));
+        this.parentElement.append(this.renderAlert(alert));
 
         // TODO: Stinger animation
         // TODO: different priority
@@ -82,6 +76,31 @@ export default class Alerts extends Overlay {
     }
 
     removeAlert(alert) {
-        this.parentElement.querySelector(`.alert[data-id="${alert.id}"]`).remove();
+        const alertElement = this.parentElement.querySelector(`.alert[data-id="${alert.id}"]`);
+
+        alertElement.animate([
+            {height: alertElement.offsetHeight + 'px'},
+            {height: 0, transform: 'translateY(-10px)'}
+        ], {
+            duration: 500,
+        });
+
+        alertElement.classList.add('is-vanish');
+
+        Promise.all(alertElement.getAnimations().filter(animation => {
+            return animation instanceof CSSTransition;
+        }).map(animation => animation.finished))
+            .then(() => {
+                alertElement.remove();
+            })
+    }
+
+    renderAlert(alert) {
+        return Helpers.createElementFromHTML(`
+            <div class="alert alert--important" data-id="${alert.id}">
+                <div class="alert__title">${alert.title}</div>
+                <div class="alert__body">${alert.body}</div>
+                <div class="alert__time"><span class="moment-from-now" data-date="${alert.created}">${moment(new Date(alert.created)).fromNow()}</span></div>
+            </div>`);
     }
 }

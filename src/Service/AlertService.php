@@ -58,7 +58,7 @@ class AlertService
 
         unset($alerts[$alertKey]);
 
-        $this->keyValueStore->set(self::STORE_KEY, $alerts);
+        $this->keyValueStore->set(self::STORE_KEY, array_values($alerts));
         $this->notify();
     }
 

@@ -1,0 +1,54 @@
+@keyframes alert-blink {
+  40% {
+  }
+  50% {
+    background: #ff861e;
+  }
+  60% {
+  }
+}
+
+.overlay-alerts {
+  position: absolute;
+  top: 2%;
+  right: 2%;
+}
+
+.alert {
+  background: #FFF;
+  padding: 10px 16px;
+  border-radius: 8px;
+  min-width: 250px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, .24);
+  margin-bottom: 1em;
+  opacity: 1;
+  transition: all .5s;
+  overflow: hidden;
+}
+
+.alert--important {
+  animation: alert-blink infinite .8s;
+}
+
+.alert.is-vanish {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  opacity: 0;
+}
+
+.alert__title {
+  font-weight: bold;
+  margin-bottom: .5em;
+  font-size: 1.5em;
+}
+
+.alert__body {
+  margin-bottom: 8px;
+  font-size: 1.2em;
+}
+
+.alert__time {
+  color: rgb(0, 0, 0, .4);
+  text-align: right;
+}
