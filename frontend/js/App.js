@@ -6,6 +6,7 @@ import Alerts from "./overlays/Alerts";
 import Realtime from "./Realtime";
 import Clock from "./overlays/Clock";
 import moment from "moment";
+import Test from "./slides/test";
 
 export default class App {
     realtime;
@@ -29,6 +30,7 @@ export default class App {
         this.slides.push(new Temperature('aqara_balkon_temperature'));
         this.slides.push(new Tasks());
         this.slides.push(new Tasks());
+        this.slides.push(new Test());
 
         for (let i = 0; i < 10; i++) {
             this.slides.push(new Photo());
@@ -73,9 +75,12 @@ export default class App {
     async loadNextSlide() {
         let slide = Helpers.randomItem(this.slides);
 
-        await slide.load();
-
-        this.stage.appendChild(Helpers.createElementFromHTML(`<div class="slide slide--next slide--type--${slide.type}" style="background-color: ${slide.getBackgroundColor()}">${slide.render()}</div>`))
+        try {
+            await slide.load();
+            this.stage.appendChild(Helpers.createElementFromHTML(`<div class="slide slide--next slide--type--${slide.type}" style="background-color: ${slide.getBackgroundColor()}">${slide.render()}</div>`))
+        } catch (e) {
+            this.stage.appendChild(Helpers.createElementFromHTML(`<div class="slide slide--next slide--type--error" style="background-color: indianred; padding: 20px">An error occured while loading a <em>${slide.constructor.name}</em> slide:<br><br><pre>${e.message}</pre><pre>${e.stack}</pre></div>`));
+        }
     }
 
     nextSlide() {
