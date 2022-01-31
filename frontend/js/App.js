@@ -6,7 +6,6 @@ import Alerts from "./overlays/Alerts";
 import Realtime from "./Realtime";
 import Clock from "./overlays/Clock";
 import moment from "moment";
-import Test from "./slides/test";
 
 export default class App {
     realtime;
@@ -30,7 +29,7 @@ export default class App {
         this.slides.push(new Temperature('aqara_balkon_temperature'));
         this.slides.push(new Tasks());
         this.slides.push(new Tasks());
-        this.slides.push(new Test());
+        // this.slides.push(new Test());
 
         for (let i = 0; i < 10; i++) {
             this.slides.push(new Photo());
