@@ -1,5 +1,5 @@
-import Helpers from "../Helpers";
 import Slide from "../Slide";
+import Environment from "../Environment";
 
 export default class Photo extends Slide {
     constructor() {
@@ -9,7 +9,7 @@ export default class Photo extends Slide {
     }
 
     async load() {
-        const response = await fetch('/api/photos', {
+        const response = await fetch(Environment.apiBaseUrl + 'api/photos', {
             method: 'GET',
         });
         this.data = await response.json();

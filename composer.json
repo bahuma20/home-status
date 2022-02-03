@@ -11,6 +11,7 @@
       "doctrine/annotations": "^1.13",
       "knpuniversity/oauth2-client-bundle": "^2.9",
       "league/oauth2-google": "^4.0",
+      "nelmio/cors-bundle": "^2.2",
       "nicklaw5/twitch-api-php": "^6.0",
       "symfony-bundles/json-request-bundle": "^4.1",
       "symfony/apache-pack": "^1.0",

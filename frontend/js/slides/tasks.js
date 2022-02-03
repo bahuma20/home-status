@@ -1,4 +1,5 @@
 import Slide from "../Slide";
+import Environment from "../Environment";
 
 export default class Tasks extends Slide {
     constructor() {
@@ -8,7 +9,7 @@ export default class Tasks extends Slide {
     }
 
     async load() {
-        const response = await fetch('/api/tasks', {
+        const response = await fetch(Environment.apiBaseUrl + 'api/tasks', {
             method: 'GET',
         });
         this.data = await response.json();

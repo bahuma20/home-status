@@ -1,6 +1,7 @@
 import Overlay from "../Overlay";
 import Helpers from "../Helpers";
 import moment from "moment";
+import Environment from "../Environment";
 
 export default class Alerts extends Overlay {
     realtime;
@@ -45,7 +46,7 @@ export default class Alerts extends Overlay {
     }
 
     async loadAlerts() {
-        const response = await fetch('/api/alerts');
+        const response = await fetch(Environment.apiBaseUrl + 'api/alerts');
         this.alerts = await response.json();
     }
 
@@ -97,10 +98,17 @@ export default class Alerts extends Overlay {
 
     renderAlert(alert) {
         return Helpers.createElementFromHTML(`
-            <div class="alert alert--important" data-id="${alert.id}">
-                <div class="alert__title">${alert.title}</div>
-                <div class="alert__body">${alert.body}</div>
-                <div class="alert__time"><span class="moment-from-now" data-date="${alert.created}">${moment(new Date(alert.created)).fromNow()}</span></div>
+            <div class="alert ${alert.priority >= 3 ? 'alert--important' : ''}"
+                data-id="${alert.id}"
+                ${alert.url ? `onclick="window.location='${alert.url}'"` : ''}>
+
+                ${alert.icon ? `<div class="alert__icon"><i class="${alert.icon}"></i></div>` : ''}
+
+                <div class="alert__text">
+                    <div class="alert__title">${alert.title}</div>
+                    ${alert.body ? `<div class="alert__body">${alert.body}</div>` : ''}
+                    <div class="alert__time"><span class="moment-from-now" data-date="${alert.created}">${moment(new Date(alert.created)).fromNow()}</span></div>
+                </div>
             </div>`);
     }
 }

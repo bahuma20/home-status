@@ -9,6 +9,7 @@ use App\Service\KeyValueStore;
 use App\Service\TwitchClient;
 use DateTime;
 use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -87,12 +88,15 @@ class TwitchController extends AbstractController
             case 'notification':
                 switch ($data->subscription->type) {
                     case 'stream.online':
-                        $alert = new Alert();
-                        $alert->id = 'twitch_' . $data->event->broadcaster_user_id;
-                        $alert->title = $data->event->broadcaster_user_name . ' ist live';
+                        $alert = new Alert(
+                            'twitch_' . $data->event->broadcaster_user_id,
+                            $data->event->broadcaster_user_name . ' ist live',
+                            new DateTime($data->event->started_at)
+                        );
+
                         $alert->body = 'No body';
                         $alert->icon = 'twitch';
-                        $alert->created = new DateTime($data->event->started_at);
+                        $alert->priority = Alert::PRIORITY_LOW;
                         $alertService->add($alert);
                         return new Response('Alert created');
                         break;
@@ -115,8 +119,15 @@ class TwitchController extends AbstractController
         }
     }
 
-    #[Route('/test-twitch', name: 'testtwitch', methods: ['GET'])]
-    public function test(TwitchClient $twitchClient)
+    /**
+     * Synchronize followed users and creates subscriptions for stream online and offline events.
+     *
+     * @param TwitchClient $twitchClient
+     * @return Response
+     * @throws GuzzleException
+     */
+    #[Route('/api/twitch/sync', name: 'twitch_sync', methods: ['GET'])]
+    public function sync(TwitchClient $twitchClient): Response
     {
         $subscriptions = $twitchClient->getEnabledEventSubscriptions();
 
@@ -127,7 +138,10 @@ class TwitchController extends AbstractController
             return in_array($subscription->type, ['stream.offline', 'stream.online']) && !in_array($subscription->condition->broadcaster_user_id, $userIds);
         });
 
+        $this->logger->info(sprintf('Found %s orphaned subscriptions', count($orphanedSubscriptions)));
+
         foreach ($orphanedSubscriptions as $subscription) {
+            $this->logger->info(sprintf('Delete subscription with id "%s"', $subscription->id));
             $twitchClient->deleteEventSubscription($subscription->id);
         }
 
@@ -137,10 +151,12 @@ class TwitchController extends AbstractController
 
         foreach ($userIds as $userId) {
             $onlineSubscriptions = array_filter($subscriptions, function ($subscription) use ($userId) {
+                $this->logger->info(sprintf('Create online subscription for user "%s"', $subscription->condition->broadcaster_user_id));
                 return $subscription->condition->broadcaster_user_id == $userId && $subscription->type == "stream.online";
             });
 
             $offlineSubscriptions = array_filter($subscriptions, function ($subscription) use ($userId) {
+                $this->logger->info(sprintf('Create offline subscription for user "%s"', $subscription->condition->broadcaster_user_id));
                 return $subscription->condition->broadcaster_user_id == $userId && $subscription->type == "stream.offline";
             });
 
@@ -153,6 +169,8 @@ class TwitchController extends AbstractController
             }
         }
 
+        $this->logger->info(sprintf('Found %s missing subscriptions', count($missingSubscriptions)));
+
         foreach ($missingSubscriptions as $userId => $types) {
             if (in_array('online', $types)) {
                 $twitchClient->subscribeToStreamOnline($userId, 'twitch_webhook');
@@ -162,5 +180,7 @@ class TwitchController extends AbstractController
                 $twitchClient->subscribeToStreamOffline($userId, 'twitch_webhook');
             }
         }
+
+        return new Response('Followers were synchronized and subscriptions created.');
     }
 }

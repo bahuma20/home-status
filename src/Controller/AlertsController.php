@@ -38,16 +38,27 @@ class AlertsController extends AbstractController
         } catch (EntityNotFoundException $e) {
         }
 
-        $alert = new Alert();
-        $alert->id = $request->get('id');
-        $alert->title = $request->get('title');
-        $alert->body = $request->get('body');
-        $alert->icon = $request->get('icon');
-        $alert->created = new DateTime();
+        $alert = new Alert($request->get('id'), $request->get('title'), new DateTime());
+
+        if ($request->get('icon')) {
+            $alert->icon = $request->get('icon');
+        }
+
+        if ($request->get('body')) {
+            $alert->body = $request->get('body');
+        }
+
+        if ($request->get('priority')) {
+            $alert->priority = $request->get('priority');
+        }
+
+        if ($request->get('url')) {
+            $alert->url = $request->get('url');
+        }
 
         $this->alertService->add($alert);
 
-        return new Response('Alert created', Response::HTTP_CREATED);
+        return $this->json($alert, Response::HTTP_CREATED);
     }
 
     #[Route('/api/alerts/{id}', name: 'alerts_delete', methods: ['DELETE'])]

@@ -18,7 +18,6 @@
   background: #FFF;
   padding: 10px 16px;
   border-radius: 8px;
-  min-width: 250px;
   box-shadow: 0 3px 5px rgba(0, 0, 0, .24);
   margin-bottom: 1em;
   opacity: 1;
@@ -35,6 +34,23 @@
   padding-bottom: 0;
   margin-bottom: 0;
   opacity: 0;
+}
+
+.alert {
+  display: flex;
+  gap: 24px;
+}
+
+.alert__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+}
+
+.alert__text {
+  flex: 1;
+  min-width: 250px;
 }
 
 .alert__title {

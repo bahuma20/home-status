@@ -24,7 +24,7 @@ class PhotosController extends AbstractController
      *
      * @return Response
      */
-    #[Route('/api/photos/index', name: 'photos_index', methods: ['GET'])]
+    #[Route('/api/photos/sync', name: 'photos_sync', methods: ['GET'])]
     public function index(): Response
     {
         $this->photosService->storePeoplePhotos();
