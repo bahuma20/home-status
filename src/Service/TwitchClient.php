@@ -2,6 +2,9 @@
 
 namespace App\Service;
 
+use App\Entity\Twitch\EventSubscription;
+use App\Entity\Twitch\EventSubscriptionCondition;
+use App\Entity\Twitch\EventSubscriptionTransport;
 use App\Entity\Twitch\User;
 use DateTime;
 use Exception;
@@ -109,13 +112,31 @@ class TwitchClient
     }
 
     /**
+     * @return EventSubscription[]
      * @throws GuzzleException
+     * @throws Exception
      */
-    public function getEnabledEventSubscriptions()
+    public function getEnabledEventSubscriptions(): array
     {
         $response = $this->getApi()->getEventSubApi()->getEventSubSubscription($this->getAppAccessToken());
         $data = json_decode($response->getBody()->getContents());
-        var_dump($data);
+        $data = $data->data;
+
+        return array_map(function ($entry) {
+            $subscription = new EventSubscription();
+            $subscription->id = $entry->id;
+            $subscription->status = $entry->status;
+            $subscription->type = $entry->type;
+            $subscription->version = $entry->version;
+            $subscription->condition = new EventSubscriptionCondition();
+            $subscription->condition->broadcaster_user_id = $entry->condition->broadcaster_user_id;
+            $subscription->created_at = new DateTime($entry->created_at);
+            $subscription->transport = new EventSubscriptionTransport();
+            $subscription->transport->method = $entry->transport->method;
+            $subscription->transport->callback = $entry->transport->callback;
+            $subscription->cost = $entry->cost;
+            return $subscription;
+        }, $data);
     }
 
     /**
@@ -126,5 +147,20 @@ class TwitchClient
         $webhookUrl = $this->router->generate($routeId, $routeParameters, UrlGeneratorInterface::ABSOLUTE_URL);
         var_dump($webhookUrl);
         $this->getApi()->getEventSubApi()->subscribeToStreamOnline($this->getAppAccessToken(), $_ENV['TWITCH_WEBHOOK_SECRET'], $webhookUrl, $userId);
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function subscribeToStreamOffline(int $userId, string $routeId, array $routeParameters = []): void
+    {
+        $webhookUrl = $this->router->generate($routeId, $routeParameters, UrlGeneratorInterface::ABSOLUTE_URL);
+        var_dump($webhookUrl);
+        $this->getApi()->getEventSubApi()->subscribeToStreamOffline($this->getAppAccessToken(), $_ENV['TWITCH_WEBHOOK_SECRET'], $webhookUrl, $userId);
+    }
+
+    public function deleteEventSubscription($subscriptionId): void
+    {
+        $this->getApi()->getEventSubApi()->deleteEventSubSubscription($this->getAppAccessToken(), $subscriptionId);
     }
 }

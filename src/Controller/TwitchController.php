@@ -9,6 +9,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class TwitchController extends AbstractController
@@ -45,20 +47,98 @@ class TwitchController extends AbstractController
     }
 
     #[Route('/api/twitch/webhook', name: 'twitch_webhook', methods: ['POST'])]
-    public function webhook(Request $request)
+    public function webhook(Request $request, TwitchClient $twitchClient): Response
     {
+        // Verify signature
         $this->logger->debug(print_r($request->headers, true));
-        $this->logger->debug($request->getContent());
+
+        $messageSignature = $request->headers->get('twitch-eventsub-message-signature');
+        $messageId = $request->headers->get('twitch-eventsub-message-id');
+        $messageTimestamp = $request->headers->get('twitch-eventsub-message-timestamp');
+
+        $secret = $_ENV['TWITCH_WEBHOOK_SECRET'];
+
+        $this->logger->debug('signature:' . $messageSignature);
+        $this->logger->debug('id:' . $messageId);
+        $this->logger->debug('timestamp:' . $messageTimestamp);
+
+
+        $message = $messageId . $messageTimestamp . $request->getContent();
+        $hmac = 'sha256=' . hash_hmac('sha256', $message, $secret, FALSE);
+
+        $this->logger->debug('message:' . $message);
+        $this->logger->debug('hmac:' . print_r($hmac, true));
+
+        if ($hmac !== $messageSignature) {
+            throw new UnauthorizedHttpException('Twitch Signature', 'Twitch Signature could not be verified');
+        }
+
+
+        $data = json_decode($request->getContent());
+        switch ($request->headers->get('twitch-eventsub-message-type')) {
+            case 'webhook_callback_verification':
+                return new Response($data->challenge);
+                break;
+            case 'revocation':
+                $this->logger->warning('Subscripton of type "' . $data->subscription->type . '" to "' . $data->subscription->condition->broadcaster_user_id . '" was revoked for reason "' . $data->subscription->status);
+                return new Response();
+                break;
+
+            case 'notification':
+
+                break;
+
+            default:
+                throw new BadRequestHttpException('Unknown eventsub-message-type');
+        }
     }
 
     #[Route('/test-twitch', name: 'testtwitch', methods: ['GET'])]
     public function test(TwitchClient $twitchClient)
     {
-        $twitchClient->getEnabledEventSubscriptions();
+        $subscriptions = $twitchClient->getEnabledEventSubscriptions();
 
         $userIds = $twitchClient->getFollowedUsersIds();
 
-        $twitchClient->subscribeToStreamOnline($userIds[0], 'twitch_webhook');
+        // Delete orphaned subscriptions
+        $orphanedSubscriptions = array_filter($subscriptions, function ($subscription) use ($userIds) {
+            return in_array($subscription->type, ['stream.offline', 'stream.online']) && !in_array($subscription->condition->broadcaster_user_id, $userIds);
+        });
 
+        foreach ($orphanedSubscriptions as $subscription) {
+            $twitchClient->deleteEventSubscription($subscription->id);
+        }
+
+
+        // Create missing subscriptions
+        $missingSubscriptions = [];
+
+        foreach ($userIds as $userId) {
+            $onlineSubscriptions = array_filter($subscriptions, function ($subscription) use ($userId) {
+                return $subscription->condition->broadcaster_user_id == $userId && $subscription->type == "stream.online";
+            });
+
+            $offlineSubscriptions = array_filter($subscriptions, function ($subscription) use ($userId) {
+                return $subscription->condition->broadcaster_user_id == $userId && $subscription->type == "stream.offline";
+            });
+
+            if (count($onlineSubscriptions) == 0) {
+                $missingSubscriptions[$userId][] = 'online';
+            }
+
+            if (count($offlineSubscriptions) == 0) {
+                $missingSubscriptions[$userId][] = 'offline';
+            }
+        }
+
+        foreach ($missingSubscriptions as $userId => $types) {
+            if (in_array('online', $types)) {
+                $twitchClient->subscribeToStreamOnline($userId, 'twitch_webhook');
+            }
+
+            if (in_array('offline', $types)) {
+                $twitchClient->subscribeToStreamOffline($userId, 'twitch_webhook');
+            }
+        }
     }
 }
