@@ -18,6 +18,7 @@ class TwitchClient
 {
 
     protected AccessToken $accessToken;
+    protected string $appAccessToken;
     protected TwitchApi $twitchApi;
     protected RouterInterface $router;
 
@@ -96,17 +97,34 @@ class TwitchClient
     /**
      * @throws GuzzleException
      */
+    public function getAppAccessToken(): string
+    {
+        if (empty($this->appAccessToken)) {
+            $response = $this->twitchApi->getOauthApi()->getAppAccessToken();
+            $data = json_decode($response->getBody()->getContents());
+            $this->appAccessToken = $data->access_token;
+        }
+
+        return $this->appAccessToken;
+    }
+
+    /**
+     * @throws GuzzleException
+     */
     public function getEnabledEventSubscriptions()
     {
-        $response = $this->getApi()->getEventSubApi()->getEventSubSubscription($this->accessToken->getToken(),);
+        $response = $this->getApi()->getEventSubApi()->getEventSubSubscription($this->getAppAccessToken());
         $data = json_decode($response->getBody()->getContents());
         var_dump($data);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function subscribeToStreamOnline(int $userId, string $routeId, array $routeParameters = []): void
     {
         $webhookUrl = $this->router->generate($routeId, $routeParameters, UrlGeneratorInterface::ABSOLUTE_URL);
         var_dump($webhookUrl);
-        $this->getApi()->getEventSubApi()->subscribeToStreamOnline($this->accessToken->getToken(), $_ENV['TWITCH_WEBHOOK_SECRET'], $webhookUrl, $userId);
+        $this->getApi()->getEventSubApi()->subscribeToStreamOnline($this->getAppAccessToken(), $_ENV['TWITCH_WEBHOOK_SECRET'], $webhookUrl, $userId);
     }
 }
