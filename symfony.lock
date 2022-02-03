@@ -1,4 +1,7 @@
 {
+    "depotwarehouse/oauth2-twitch": {
+        "version": "1.3.3"
+    },
     "doctrine/annotations": {
         "version": "1.13",
         "recipe": {
@@ -49,6 +52,9 @@
     },
     "league/oauth2-google": {
         "version": "4.0.0"
+    },
+    "nicklaw5/twitch-api-php": {
+        "version": "v6.0.0"
     },
     "nikic/php-parser": {
         "version": "v4.13.2"
