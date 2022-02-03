@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Alert;
+use App\Error\EntityNotFoundException;
+use App\Service\AlertService;
 use App\Service\KeyValueStore;
 use App\Service\TwitchClient;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
@@ -47,7 +50,7 @@ class TwitchController extends AbstractController
     }
 
     #[Route('/api/twitch/webhook', name: 'twitch_webhook', methods: ['POST'])]
-    public function webhook(Request $request, TwitchClient $twitchClient): Response
+    public function webhook(Request $request, TwitchClient $twitchClient, AlertService $alertService): Response
     {
         // Verify signature
         $this->logger->debug(print_r($request->headers, true));
@@ -58,16 +61,8 @@ class TwitchController extends AbstractController
 
         $secret = $_ENV['TWITCH_WEBHOOK_SECRET'];
 
-        $this->logger->debug('signature:' . $messageSignature);
-        $this->logger->debug('id:' . $messageId);
-        $this->logger->debug('timestamp:' . $messageTimestamp);
-
-
         $message = $messageId . $messageTimestamp . $request->getContent();
         $hmac = 'sha256=' . hash_hmac('sha256', $message, $secret, FALSE);
-
-        $this->logger->debug('message:' . $message);
-        $this->logger->debug('hmac:' . print_r($hmac, true));
 
         if ($hmac !== $messageSignature) {
             throw new UnauthorizedHttpException('Twitch Signature', 'Twitch Signature could not be verified');
@@ -85,7 +80,28 @@ class TwitchController extends AbstractController
                 break;
 
             case 'notification':
-
+                switch ($data->subscription->type) {
+                    case 'stream.online':
+                        $alert = new Alert();
+                        $alert->id = 'twitch_' . $data->event->broadcaster_user_id;
+                        $alert->title = $data->event->broadcaster_user_name . ' ist live';
+                        $alert->body = 'No body';
+                        $alert->icon = 'twitch';
+                        $alertService->add($alert);
+                        return new Response('Alert created');
+                        break;
+                    case 'stream.offline':
+                        try {
+                            $alertService->delete('twitch_' . $data->event->broadcaster_user_id);
+                        } catch (EntityNotFoundException $e) {
+                            // If it does not exist, it's ok :D
+                        }
+                        return new Response('Alert removed');
+                        break;
+                    default:
+                        throw new BadRequestHttpException('The subscription type "' . $data->subscription->type . '" is not supported.');
+                        break;
+                }
                 break;
 
             default:
