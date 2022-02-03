@@ -7,6 +7,8 @@ use App\Error\EntityNotFoundException;
 use App\Service\AlertService;
 use App\Service\KeyValueStore;
 use App\Service\TwitchClient;
+use DateTime;
+use Exception;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -49,6 +51,9 @@ class TwitchController extends AbstractController
         return new Response('Successfully linked twitch account');
     }
 
+    /**
+     * @throws Exception
+     */
     #[Route('/api/twitch/webhook', name: 'twitch_webhook', methods: ['POST'])]
     public function webhook(Request $request, TwitchClient $twitchClient, AlertService $alertService): Response
     {
@@ -87,6 +92,7 @@ class TwitchController extends AbstractController
                         $alert->title = $data->event->broadcaster_user_name . ' ist live';
                         $alert->body = 'No body';
                         $alert->icon = 'twitch';
+                        $alert->created = new DateTime($data->event->started_at);
                         $alertService->add($alert);
                         return new Response('Alert created');
                         break;
