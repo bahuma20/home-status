@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Service\KeyValueStore;
 use App\Service\PhotosService;
+use GuzzleHttp\Exception\ClientException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,11 +14,13 @@ class PhotosController extends AbstractController
 {
     protected PhotosService $photosService;
     protected KeyValueStore $keyValueStore;
+    protected LoggerInterface $logger;
 
-    public function __construct(PhotosService $photosService, KeyValueStore $keyValueStore)
+    public function __construct(PhotosService $photosService, KeyValueStore $keyValueStore, LoggerInterface $logger)
     {
         $this->photosService = $photosService;
         $this->keyValueStore = $keyValueStore;
+        $this->logger = $logger;
     }
 
     /**
@@ -75,7 +79,16 @@ class PhotosController extends AbstractController
             $randomPhotoId = $photos[rand(0, count($photos))];
         }
 
-        $mediaItem = $this->photosService->getMediaItem($randomPhotoId);
+        try {
+            $mediaItem = $this->photosService->getMediaItem($randomPhotoId);
+        } catch (ClientException $e) {
+            $this->logger->debug('Client exception... ', [
+                'body' => $e->getResponse()->getBody()->getContents(),
+            ]);
+
+            throw $e;
+        }
+
         $mediaItem->homeAppType = $type;
 
         return $this->json($mediaItem);
