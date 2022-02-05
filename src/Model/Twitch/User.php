@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity\Twitch;
+namespace App\Model\Twitch;
 
 use DateTime;
 use GuzzleHttp\Psr7\Uri;

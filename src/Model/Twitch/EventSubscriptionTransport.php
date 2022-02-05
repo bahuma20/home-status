@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity\Twitch;
+namespace App\Model\Twitch;
 
 class EventSubscriptionTransport
 {

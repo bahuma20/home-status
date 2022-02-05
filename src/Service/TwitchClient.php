@@ -2,10 +2,10 @@
 
 namespace App\Service;
 
-use App\Entity\Twitch\EventSubscription;
-use App\Entity\Twitch\EventSubscriptionCondition;
-use App\Entity\Twitch\EventSubscriptionTransport;
-use App\Entity\Twitch\User;
+use App\Model\Twitch\EventSubscription;
+use App\Model\Twitch\EventSubscriptionCondition;
+use App\Model\Twitch\EventSubscriptionTransport;
+use App\Model\Twitch\User;
 use DateTime;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
