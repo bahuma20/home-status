@@ -1,7 +1,10 @@
-import Environment from "./Environment";
-
 export default class Realtime {
     baseUrl = null;
+    api;
+
+    constructor(api) {
+        this.api = api;
+    }
 
     async subscribe(topics) {
         if (!this.baseUrl) {
@@ -18,7 +21,7 @@ export default class Realtime {
     }
 
     async getSubscriptionBaseUrl() {
-        const response = await fetch(Environment.apiBaseUrl + 'api/realtime/subscription-url');
+        const response = await this.api.fetch('api/realtime/subscription-url');
         const data = await response.json();
         return data.url;
     }

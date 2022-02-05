@@ -1,16 +1,15 @@
 import Slide from "../Slide";
-import Environment from "../Environment";
 
 export default class Temperature extends Slide {
-    constructor(entity_id) {
-        super();
+    constructor(api, entity_id) {
+        super(api);
         this.type = 'temperature'
         this.data = null;
         this.entity_id = entity_id
     }
 
     async load() {
-        let response = await fetch(`${Environment.apiBaseUrl}api/ha/temperature/${this.entity_id}`);
+        let response = await this.api.fetch(`api/ha/temperature/${this.entity_id}`);
         this.data = await response.json();
     }
 

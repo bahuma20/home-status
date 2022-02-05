@@ -11,5 +11,5 @@ homepage:
     path: /
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
     defaults:
-        path: /app/
+      path: /app/index.html
         permanent: false

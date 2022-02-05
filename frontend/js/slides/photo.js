@@ -1,15 +1,14 @@
 import Slide from "../Slide";
-import Environment from "../Environment";
 
 export default class Photo extends Slide {
-    constructor() {
-        super();
+    constructor(api) {
+        super(api);
         this.type = 'photo'
         this.data = null;
     }
 
     async load() {
-        const response = await fetch(Environment.apiBaseUrl + 'api/photos', {
+        const response = await this.api.fetch('api/photos', {
             method: 'GET',
         });
         this.data = await response.json();

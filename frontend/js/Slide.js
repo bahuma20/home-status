@@ -2,9 +2,10 @@ import Helpers from "./Helpers";
 
 export default class Slide {
 
-    constructor() {
+    constructor(api) {
         this.type = null;
         this.backgroundColor = null; // If null, it will get a random one.
+        this.api = api;
 
         this.backgroundColors = [
             '#FFE082',

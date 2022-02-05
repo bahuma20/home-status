@@ -1,16 +1,17 @@
 import Overlay from "../Overlay";
 import Helpers from "../Helpers";
 import moment from "moment";
-import Environment from "../Environment";
 
 export default class Alerts extends Overlay {
     realtime;
+    api;
     eventSource;
     alerts = [];
 
-    constructor(realtime) {
+    constructor(realtime, api) {
         super();
         this.realtime = realtime;
+        this.api = api;
     }
 
     async init(parentElement) {
@@ -46,7 +47,7 @@ export default class Alerts extends Overlay {
     }
 
     async loadAlerts() {
-        const response = await fetch(Environment.apiBaseUrl + 'api/alerts');
+        const response = await this.api.fetch('api/alerts');
         this.alerts = await response.json();
     }
 

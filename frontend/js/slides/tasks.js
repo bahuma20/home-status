@@ -1,15 +1,14 @@
 import Slide from "../Slide";
-import Environment from "../Environment";
 
 export default class Tasks extends Slide {
-    constructor() {
-        super();
+    constructor(api) {
+        super(api);
         this.type = 'tasks'
         this.data = null;
     }
 
     async load() {
-        const response = await fetch(Environment.apiBaseUrl + 'api/tasks', {
+        const response = await this.api.fetch('api/tasks', {
             method: 'GET',
         });
         this.data = await response.json();
