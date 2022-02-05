@@ -34,7 +34,7 @@ const config = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            templateContent: ({htmlWebpackPlugin}) => '<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>' + htmlWebpackPlugin.options.title + '</title></head><body><div class="stage"></div></body></html>',
+            templateContent: ({htmlWebpackPlugin}) => '<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>' + htmlWebpackPlugin.options.title + '</title></head><body><div class="stage"></div><script src="https://unpkg.com/@lottiefiles/lottie-player@0.2.0/dist/lottie-player.js"></script></body></html>',
             filename: 'index.html',
         }),
         new webpack.DefinePlugin({
