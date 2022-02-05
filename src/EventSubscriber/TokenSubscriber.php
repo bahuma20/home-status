@@ -12,9 +12,7 @@ class TokenSubscriber implements EventSubscriberInterface
 {
     const PUBLIC_PATHS = [
         '/',
-        '/connect/twitch',
         '/connect/twitch/callback',
-        '/connect/google',
         '/connect/google/callback'
     ];
 
