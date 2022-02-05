@@ -18,6 +18,7 @@ class Alert implements JsonSerializable
     public DateTime $created;
     public int $priority = self::PRIORITY_MEDIUM;
     public ?string $url = NULL;
+    public ?DateTime $expires = NULL;
 
     /**
      * @param string $id
@@ -42,6 +43,7 @@ class Alert implements JsonSerializable
             'created' => $this->created->format('c'),
             'priority' => $this->priority,
             'url' => $this->url,
+            'expires' => $this->expires,
         ];
     }
 }
