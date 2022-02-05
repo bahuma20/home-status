@@ -94,7 +94,17 @@ export default class App {
             await slide.load();
             this.stage.appendChild(Helpers.createElementFromHTML(`<div class="slide slide--next slide--type--${slide.type}" style="background-color: ${slide.getBackgroundColor()}">${slide.render()}</div>`))
         } catch (e) {
-            this.stage.appendChild(Helpers.createElementFromHTML(`<div class="slide slide--next slide--type--error" style="background-color: indianred; padding: 20px">An error occured while loading a <em>${slide.type}</em> slide:<br><br><pre>${e.message}</pre><pre>${e.stack}</pre></div>`));
+            this.stage.appendChild(Helpers.createElementFromHTML(`
+                <div class="slide slide--next slide--type--error"
+                     style="background-color: indianred; padding: 20px">
+                     <p>An error occured while loading a <em>${slide.type}</em> slide:</p>
+                     <p>Error Message:</p>
+                     <pre>${e.message}</pre>
+                     <p>Slide:</p>
+                     <code>${JSON.stringify(slide)}</code>
+                     <p>Stacktrace:</p>
+                     <pre>${e.stack}</pre>
+                </div>`));
         }
     }
 
