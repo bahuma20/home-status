@@ -38,7 +38,7 @@ class TwitchClient
             $refreshToken = $keyValueStore->get('twitch_refresh_token');
             $oauthClient = $clientRegistry->getClient('twitch');
             $newToken = $oauthClient->refreshAccessToken($refreshToken);
-            $keyValueStore->set('google_access_token', $newToken);
+            $keyValueStore->set('twitch_access_token', $newToken);
             $this->accessToken = $newToken;
         }
         $this->router = $router;
