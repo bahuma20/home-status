@@ -141,7 +141,7 @@ class Alert implements JsonSerializable
             'icon' => $this->getIcon(),
             'created' => $this->getCreated()->format('c'),
             'priority' => $this->getPriority(),
-            'url' => $this->getUrl()->__toString(),
+            'url' => $this->getUrl()?->__toString(),
             'expires' => $this->getExpires()?->format('c'),
         ];
     }
